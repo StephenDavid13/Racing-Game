@@ -11,13 +11,11 @@ var AnimationLayer = cc.Layer.extend({
     init:function() {
         this._super();
 		var size = this.size = cc.director.getWinSize();
-
-		var enemies = new EnemiesLayer();
+        var enemies = new EnemiesLayer();
 
         this.addChild(enemies);
         
-        
-		var car = this.car = new cc.Sprite.create(res.Car_temp_png);
+		var car = this.car = new cc.Sprite(res.Car_temp_png);
         car.setAnchorPoint(cc.p(0.5,0.5));
 		car.setPosition(cc.p(size.width/2 - 3, 150));
 		this.addChild(car);
@@ -73,7 +71,7 @@ var AnimationLayer = cc.Layer.extend({
     {
         if (this.goleft)
         {
-            var sprite_action = cc.MoveBy.create(0.35, cc.p(-ONE_MOVE, 0));
+            var sprite_action = cc.MoveBy(0.35, cc.p(-ONE_MOVE, 0));
             this.car.runAction(sprite_action);
             
             this.goright++;
@@ -84,7 +82,7 @@ var AnimationLayer = cc.Layer.extend({
     {
         if(this.goright)
         {
-            var sprite_action = cc.MoveBy.create(0.35, cc.p(ONE_MOVE, 0));
+            var sprite_action = cc.MoveBy(0.35, cc.p(ONE_MOVE, 0));
             this.car.runAction(sprite_action);
             
             this.goleft++;

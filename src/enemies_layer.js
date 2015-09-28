@@ -9,13 +9,13 @@ ctor:function () {
     init:function() {
         this._super();
         
-        var car2 = this.car2 = new cc.Sprite.create(res.Car_temp2_png);
+        var car2 = this.car2 = new cc.Sprite(res.Car_temp2_png);
         this.addChild(car2);
         
-        var car3 = this.car3 = new cc.Sprite.create(res.Car_temp3_png);
+        var car3 = this.car3 = new cc.Sprite(res.Car_temp3_png);
         this.addChild(car3);
         
-        var car4 = this.car4 = new cc.Sprite.create(res.Car_temp4_png);
+        var car4 = this.car4 = new cc.Sprite(res.Car_temp4_png);
         this.addChild(car4);
         
         
