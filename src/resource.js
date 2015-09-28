@@ -9,7 +9,8 @@ var res = {
 	Start_nope_png : "res/start_n.png",
 	Start_yeah_png : "res/start_s.png",
 	Left_png : "res/left.png",
-	Rigth_png : "res/right.png"
+	Rigth_png : "res/right.png",
+	CloseNormal_png : "res/CloseNormal.png"
 };
 
 var g_resources = [

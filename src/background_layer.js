@@ -35,7 +35,8 @@ var ScrollingBG = cc.Sprite.extend({
 	},
 	scroll:function() {
 		this.setPosition(this.getPosition().x, this.getPosition().y-scrollSpeed);
-		if(this.getPosition().y<0) {
+		if(this.getPosition().y < 0) 
+        {
 			this.setPosition(this.getPosition().x, this.getPosition().y+420);
 		}
 	}

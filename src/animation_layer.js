@@ -12,15 +12,15 @@ var AnimationLayer = cc.Layer.extend({
         this._super();
 		var size = this.size = cc.director.getWinSize();
 
-		var enemies = new EnemiesLayer();
-
+		var enemies =new EnemiesLayer();
+//
         this.addChild(enemies);
         
         
-		var car = this.car = new cc.Sprite.create(res.Car_temp_png);
-        car.setAnchorPoint(cc.p(0.5,0.5));
-		car.setPosition(cc.p(size.width/2 - 3, 150));
-		this.addChild(car);
+        this.car = new cc.Sprite.create(res.Car_temp_png);
+        this.car.setAnchorPoint(cc.p(0.5,0.5));
+		this.car.setPosition(cc.p(size.width/2 - 3, 150));
+		this.addChild(this.car);
         
          var cleft = cc.MenuItemImage.create(
                 res.Left_png,
@@ -61,11 +61,10 @@ var AnimationLayer = cc.Layer.extend({
                    event.getCurrentTarget().turnright();
                 }
         
-//                cc.log("key was pressed:  " + keyCode.toString());
+                cc.log("key was pressed:  " + keyCode.toString());
             },
             onKeyReleased: function(keyCode, event){
             }
-            
         }, this);
        }  
     },
