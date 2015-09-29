@@ -71,7 +71,7 @@ var AnimationLayer = cc.Layer.extend({
     {
         if (this.goleft)
         {
-            var sprite_action = cc.MoveBy(0.35, cc.p(-ONE_MOVE, 0));
+            var sprite_action = cc.MoveBy(0.2, cc.p(-ONE_MOVE, 0));
             this.car.runAction(sprite_action);
             
             this.goright++;
@@ -82,7 +82,7 @@ var AnimationLayer = cc.Layer.extend({
     {
         if(this.goright)
         {
-            var sprite_action = cc.MoveBy(0.35, cc.p(ONE_MOVE, 0));
+            var sprite_action = cc.MoveBy(0.2, cc.p(ONE_MOVE, 0));
             this.car.runAction(sprite_action);
             
             this.goleft++;
