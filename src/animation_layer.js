@@ -11,10 +11,10 @@ var AnimationLayer = cc.Layer.extend({
     init:function() {
         this._super();
 		var size = this.size = cc.director.getWinSize();
-
-		var enemies =new EnemiesLayer();
 //
-        this.addChild(enemies);
+//		var enemies =new EnemiesLayer();
+//        
+//        this.addChild(enemies);
         
         
         this.car = new cc.Sprite.create(res.Car_temp_png);
