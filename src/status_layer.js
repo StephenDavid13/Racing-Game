@@ -1,19 +1,27 @@
 var StatusLayer = cc.Layer.extend({
-    labelCoin:null,
     labelMeter:null,
+	score:0,
+	updateRate:0.1,
 
-    ctor:function () {
-        this._super();
-        this.init();
+    onEnter:function () {
+		var winsize = cc.director.getWinSize();
+		
+		score=0;
+		var labelName = "" + score + " M";
+
+        labelMeter = new cc.LabelTTF(labelName, "Helvetica", 20);
+        labelMeter.setPosition(cc.p(winsize.width - 50, winsize.height - 20));
+		
+		updateRate=0.1;
+		
+        this.addChild(labelMeter);
+		this.schedule(this.updateNumber, updateRate);
     },
-
-    init:function () {
-        this._super();
-
-        var winsize = cc.director.getWinSize();
-
-        this.labelMeter = new cc.LabelTTF("0M", "Helvetica", 20);
-        this.labelMeter.setPosition(cc.p(winsize.width - 30, winsize.height - 20));
-        this.addChild(this.labelMeter);
-    }
+	updateNumber:function() {
+		score++;
+		
+		if(labelMeter == null) return;
+		
+		labelMeter.setString("" + score + " M");
+	}
 });
