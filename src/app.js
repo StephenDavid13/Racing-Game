@@ -12,7 +12,6 @@ var gameScene = cc.Scene.extend({
 		gameLayer.init();
 		this.addChild(gameLayer);
 		this.addChild(new AnimationLayer());
-		this.addChild(new EnemiesLayer());
 		
 		number = 0;
 		

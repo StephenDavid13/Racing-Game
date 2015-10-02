@@ -1,56 +1,124 @@
-var START_POS = 620;
-var END_POS = 50;
+var START_POS = 800;
+var END_POS = 60;
 var MOVE = 70;
 var FIX_MOVE = 17;
-var oc_streets = [];
 var STREET_LINES = 5;
-var MIN_DISTANCE = 100;
-var temp_distance = 0;
-var cars_on_lines = [][]; 
+var MIN_DISTANCE = 120;
+var SPEED_SLOW_DOWN = 1.5;
 
-for(var i = 0; i < STREET_LINES; i++)
-{
-    cars_on_lines[i][0] = { 
-                            car_pos: null,
-                            car_id: null
-                          };
-}
+var CAR2_LINE = 0;
+var CAR3_LINE = 1;
+var CAR4_LINE = 2;
+var CAR5_LINE = 3;
 
+var NEW_CAR2 = true;
+var NEW_CAR3 = true;
+var NEW_CAR4 = true;
+var NEW_CAR5 = true;
 
+var CAR2_DISTANCE_ACHIEVED = false;
+var CAR3_DISTANCE_ACHIEVED = false;
+var CAR4_DISTANCE_ACHIEVED = false;
+var CAR5_DISTANCE_ACHIEVED = false;
+
+var CAR2_SPEED = false;
+var CAR3_SPEED = false;
+var CAR4_SPEED = false;
+var CAR5_SPEED = false;
 
 var EnemiesLayer = cc.Layer.extend({
-ctor:function () {
+    
+    RANDOM_POS: cc.p(0,  START_POS + getRandomInt(0, 30)),
+    
+    available_lines : [],
+    
+    last_car: function () {
+                
+    },
+    
+    ctor:function () 
+    {
         this._super();
         this.init();     
     },
-    init:function() {
+    
+    set_all_lines_empty: function()
+    {
+        for(var i = 0; i < STREET_LINES; i++)
+        {
+            this.available_lines[i] = { 
+                                        line: i, 
+                                        empty: true
+                                      }
+        }
+    },
+    
+    line_free: function (carAX, carBX, carCX, carDX, carAY )
+    {
+        return (carAX != carBX) // IF THE CAR IS ALONE ON THE LINE
+        &&     (carAX != carCX) 
+        &&     (carAX != carDX) 
+        && ((START_POS - carAY) > MIN_DISTANCE); // AND THE DISTANCES FROM START POINT IS FAR ENOUGH
+    },
+    
+    distance_too_close: function(carAX, carAY, carBX, carBY, carCX, carCY, carDX, carDY)
+    {
+        var tooClose = false;
+        
+        tooClose = (  ((carAX == carBX)     // CHECK IF SAME LINE
+            &&         (carAY >  carBY)     // CHECK IF CAR2 IS BEHIND ANOTHER CAR
+            &&        ((carAY -  carBY) < MIN_DISTANCE) )   // CHECK THE DISTANCE, IF BELOW DISTANCE REDUCE SPEED
+
+            ||        ((carAX == carCX)     // CHECK IF SAME LINE
+            &&         (carAY >  carCY)     // CHECK IF CAR2 IS BEHIND ANOTHER CAR
+            &&        ((carAY -  carCY) < MIN_DISTANCE) )  // CHECK THE DISTANCE, IF BELOW DISTANCE REDUCE SPEED
+
+            ||        ((carAX == carDX)     // CHECK IF SAME LINE
+            &&         (carAY >  carDY)     // CHECK IF CAR2 IS BEHIND ANOTHER CAR
+            &&        ((carAY -  carDY) < MIN_DISTANCE) ) );  // CHECK THE DISTANCE, IF BELOW DISTANCE REDUCE SPEED
+        
+        return tooClose;
+    },
+    
+    get_all_available_lines: function()
+    {
+        var collect_empty_lines = [];
+        var j = 0;
+
+        for(var i = 0; i < STREET_LINES; i++)
+        {
+          if (this.available_lines[i].empty)
+          {
+              collect_empty_lines[j] = i;
+              j++
+          }
+        }
+        return collect_empty_lines;
+    },
+    
+    
+    init:function() 
+    {
         this._super();
-        f_empty_oc_streets();
+        
+        // SET ALL LINES EMPTY 
+        this.set_all_lines_empty();
         
         var car2 = this.car2 = new cc.Sprite.create(get_random_car().res_car);
-        this.car2.setPosition(0, -60);
+        this.car2.setPosition( this.RANDOM_POS );
         this.addChild(car2);
         
         var car3 = this.car3 = new cc.Sprite.create(get_random_car().res_car);
-        this.car3.setPosition(0, -60);
+        this.car3.setPosition( this.RANDOM_POS );
         this.addChild(car3);
         
         var car4 = this.car4 = new cc.Sprite.create(get_random_car().res_car);
-        this.car4.setPosition(0, -60);
+        this.car4.setPosition( this.RANDOM_POS );
         this.addChild(car4);
         
-      
-//        var car5 = this.car5 = new cc.Sprite.create(get_random_car().res_car);
-//        this.car5.setPosition(0, -60);
-//        this.addChild(car5);
-//        
-//        var car6 = this.car6 = new cc.Sprite.create(get_random_car().res_car);
-//        this.car6.setPosition(0, -60);
-//        this.addChild(car6);
-//        
-//        var car7 = this.car7 = new cc.Sprite.create(get_random_car().res_car);
-//        this.car7.setPosition(0, -60);
-//        this.addChild(car7);
+        var car5 = this.car5 = new cc.Sprite.create(get_random_car().res_car);
+        this.car5.setPosition( this.RANDOM_POS );
+        this.addChild(car5);
 
 		var size = this.size = cc.director.getWinSize();
         
@@ -58,115 +126,264 @@ ctor:function () {
     },
     update:function(dt) 
     {	
-        //Wrong logic, cars have go up or main car needs go up
+//-------------------------------------------------------------------------------------------------------------------------------
         
-       
-        
-        
-		if( (this.car2.getPosition().y < -END_POS))
+        // IF THE CAR IS OUT OF THE DISPLAY SET A NEW CAR 
+		if( NEW_CAR2 )
         {
-            // REMOVE OLD CAR FROM THE CAR LINE LIST
+             CAR2_DISTANCE_ACHIEVED = false;
             
+             // GET A RANDOM CAR TEXTURE
+             this.car2.setTexture(get_random_car().res_car);
             
+             // GET A RANDOM LINE  --> UP TO 4 CARS OTHERS, MODIFING AVAILABLE LINES, BECAUSE NOW THERE IS ALWAYS A LINE AVAIL.
+             CAR2_LINE = this.get_all_available_lines()[ getRandomInt( 0, this.get_all_available_lines().length ) ]; 
             
-            
-            var LINE = getRandomInt(0, STREET_LINES);
-            var ADDPLACEMENT = getRandomInt(50, 90);
-            
-            this.car2.setTexture(get_random_car().res_car);
-            
-            
-            // IF CURRENT LINE IS NOT OCCUPATED THEN SET THE CAR
-            if( !oc_streets[LINE].oc ) 
-            {
-                 f_set_oc_streets(LINE, true);
-                
-			     this.car2.setPosition(FIX_MOVE + (MOVE * LINE ), this.car2.getPosition().y + START_POS + ADDPLACEMENT);
-                
-                 // SAVE POS FOR COMPARING DISTANCES BETWEEN CARS
-                 f_save_pos(i_line, this.car2.getPosition().y, "car2" );
-            } 
-            else
-            {
-                // JUST SET THE CAR TO NEXT FREE LINE
-                
-               var count_empty_streets = STREET_LINES;
-            
-               for(var i_line = 0; i_line < STREET_LINES; i_line++)
-               {
-                    if( !oc_streets[i_line].oc )
+             // GET A RANDOM ADDITIONAL PLACE
+             var ADDPLACEMENT = getRandomInt(0, 5);
+             
+             // SET THE CAR
+             this.car2.setPosition(FIX_MOVE + (MOVE * CAR2_LINE ), START_POS + ADDPLACEMENT);
+             
+             // SET THE LINE TO NOT AVAILABLE AND SET WE DONT NEED A NEW CAR OF THIS TYPE
+             this.available_lines[CAR2_LINE].empty = false; NEW_CAR2 = false;
+		}
+        else 
+        { 
+            // IF MOVING
+            if( this.car2.getPosition().y > -END_POS )
+            {  
+                // IF THERE IS A CAR IN FRONT THEN SLOW DOWN 
+                if ( (this.distance_too_close(
+                                          this.car2.getPosition().x, this.car2.getPosition().y, 
+                                          this.car3.getPosition().x, this.car3.getPosition().y,
+                                          this.car4.getPosition().x, this.car4.getPosition().y,
+                                          this.car5.getPosition().x, this.car5.getPosition().y ))  )
+                {
+                    cc.log("SLOW DOWN 2");
+                    this.car2.setPosition(this.car2.getPosition().x, this.car2.getPosition().y - SPEED_SLOW_DOWN);
+                    CAR2_SPEED = true;
+                }
+                else  // ELSE KEEP THE SPEED
+                {      
+                    // IF THIS CAR IS FAR ENOUGH AND THIS CAR IS THE ONLY ONE ON HIS LINE, SET THE LINE BACK TO EMPTY
+                    if ( !CAR2_DISTANCE_ACHIEVED && this.line_free(this.car2.getPosition().x, this.car3.getPosition().x, 
+                                                                   this.car4.getPosition().x, this.car5.getPosition().x, this.car2.getPosition().y ))
                     {
-                         count_empty_streets--;
-                         
-                         f_set_oc_streets(LINE, true);
-                        
-			             this.car2.setPosition(FIX_MOVE + (MOVE * i_line ), this.car2.getPosition().y + START_POS + ADDPLACEMENT);
-                          
-                         // SAVE POS AND AN CAR_ID FOR COMPARING DISTANCES BETWEEN CARS
-                         f_save_pos(i_line, this.car2.getPosition().y, "car2" );
+                        this.available_lines[CAR2_LINE].empty = true; 
+                        CAR2_DISTANCE_ACHIEVED = true;
                     }
-                   else 
-                   {
-                        count_empty_streets--;
-                   }
-               } 
-               // IF ALL LINES ARE OCCUPATED, GET A RANDOM OCCUPATED LINE AND CHECK THE DISTANCE
-               if(!count_empty_streets)
-               {
-                   
-                   
-                    // CHECK THE DISTANCE WITH OTHERS ON THE SAME LINE
-                   f_check_distance(LINE, this.car2.getPosition().y); 
-                                
-                   
-                   
-               }
-            
-            }
+                }
                 
-		}
-        else
+                if(CAR2_SPEED) {
+                    this.car2.setPosition(this.car2.getPosition().x, this.car2.getPosition().y - SPEED_SLOW_DOWN);
+                }
+                else {
+                        this.car2.setPosition(this.car2.getPosition().x, this.car2.getPosition().y - 3.4);
+                }
+            }
+            else // ELSE CAR IS OUT OF THE DISPLAY REMEMBER TO CREATE A NEW CAR
+            {   
+                NEW_CAR2 = true;
+                CAR2_SPEED = false;
+            }
+        }
+    
+    
+//-------------------------------------------------------------------------------------------------------------------------------
+ 
+        // IF THE CAR IS OUT OF THE DISPLAY SET A NEW CAR 
+		if( NEW_CAR3 )
         {
-            this.car2.setPosition(this.car2.getPosition().x, this.car2.getPosition().y - 3);
+             CAR3_DISTANCE_ACHIEVED = false;
             
-            f_update_pos(i_line, this.car2.getPosition().y, "car2" );
+             // GET A RANDOM CAR TEXTURE
+             this.car3.setTexture(get_random_car().res_car);
+            
+             // GET A RANDOM LINE  --> UP TO 4 CARS OTHERS, MODIFING AVAILABLE LINES, BECAUSE NOW THERE IS ALWAYS A LINE AVAIL.
+             CAR3_LINE = this.get_all_available_lines()[ getRandomInt( 0, this.get_all_available_lines().length ) ]; 
+            
+             // GET A RANDOM ADDITIONAL PLACE
+             var ADDPLACEMENT = getRandomInt(0, 5);
+             
+             // SET THE CAR
+            
+             this.car3.setPosition(FIX_MOVE + (MOVE * CAR3_LINE ), START_POS + ADDPLACEMENT);
+             
+             // SET THE LINE TO NOT AVAILABLE AND SET WE DONT NEED A NEW CAR OF THIS TYPE
+             this.available_lines[CAR3_LINE].empty = false; NEW_CAR3 = false;
+		}
+        else 
+        { 
+            // IF MOVING
+            if( this.car3.getPosition().y > -END_POS )
+            {  
+                // IF THERE IS A CAR IN FRONT THEN SLOW DOWN 
+                if ( (this.distance_too_close(
+                                         this.car3.getPosition().x, this.car3.getPosition().y, 
+                                         this.car2.getPosition().x, this.car2.getPosition().y,
+                                         this.car4.getPosition().x, this.car4.getPosition().y,
+                                         this.car5.getPosition().x, this.car5.getPosition().y)) )
+                {
+                    cc.log("SLOW DOWN 3");
+                    this.car3.setPosition(this.car3.getPosition().x, this.car3.getPosition().y - SPEED_SLOW_DOWN);
+                    CAR3_SPEED = true;
+                }
+                else  // ELSE KEEP SPEED
+                {                   
+                    // IF THIS CAR IS FAR ENOUGH AND THIS CAR IS THE ONLY ONE ON HIS LINE, SET THE LINE BACK TO EMPTY
+                    if ( !CAR3_DISTANCE_ACHIEVED && this.line_free(this.car3.getPosition().x, this.car2.getPosition().x, 
+                                                                   this.car4.getPosition().x, this.car5.getPosition().x, this.car3.getPosition().y ))
+                    {
+                        this.available_lines[CAR3_LINE].empty = true; 
+                        CAR3_DISTANCE_ACHIEVED = true;
+                    }
+                }
+                
+                if(CAR3_SPEED) {
+                    this.car3.setPosition(this.car3.getPosition().x, this.car3.getPosition().y - SPEED_SLOW_DOWN);
+                }
+                else {
+                        this.car3.setPosition(this.car3.getPosition().x, this.car3.getPosition().y - 3.7);
+                }
+            }
+            else // ELSE CAR IS OUT OF THE DISPLAY REMEMBER TO CREATE A NEW CAR
+            {
+                 NEW_CAR3 = true;  
+                CAR3_SPEED = false;
+            }
         }
         
-        
-		if(this.car3.getPosition().y < -END_POS) 
-        {
-            var LINE = getRandomInt(0, STREET_LINES);
-            
-            var ADDPLACEMENT = getRandomInt(0, 40);
+//------------------------------------------------------------------------------------------------------------------------------
 
-            this.car3.setTexture(get_random_car().res_car);
-            
-            f_set_oc_streets(LINE);
-            
-			this.car3.setPosition(FIX_MOVE + (MOVE * LINE ), this.car3.getPosition().y + START_POS + ADDPLACEMENT);
-		}
-        else
+        // IF THE CAR IS OUT OF THE DISPLAY SET A NEW CAR 
+		if( NEW_CAR4 )
         {
-            this.car3.setPosition(this.car3.getPosition().x, this.car3.getPosition().y - 4);
+             CAR4_DISTANCE_ACHIEVED = false;
+            
+             // GET A RANDOM CAR TEXTURE
+             this.car4.setTexture(get_random_car().res_car);
+            
+             // GET A RANDOM LINE  --> UP TO 4 CARS OTHERS, MODIFING AVAILABLE LINES, BECAUSE NOW THERE IS ALWAYS A LINE AVAIL.
+             CAR4_LINE = this.get_all_available_lines()[ getRandomInt( 0, this.get_all_available_lines().length ) ]; 
+            
+             // GET A RANDOM ADDITIONAL PLACE
+             var ADDPLACEMENT = getRandomInt(0, 5);
+             
+             // SET THE CAR
+             this.car4.setPosition(FIX_MOVE + (MOVE * CAR4_LINE ), START_POS + ADDPLACEMENT);
+             
+             // SET THE LINE TO NOT AVAILABLE AND SET WE DONT NEED A NEW CAR OF THIS TYPE
+             this.available_lines[CAR4_LINE].empty = false; NEW_CAR4 = false;
+		}
+        else 
+        { 
+            // IF MOVING
+            if( this.car4.getPosition().y > -END_POS )
+            {  
+                // IF THERE IS A CAR IN FRONT THEN SLOW DOWN 
+                if ( (this.distance_too_close(
+                                         this.car4.getPosition().x, this.car4.getPosition().y, 
+                                         this.car3.getPosition().x, this.car3.getPosition().y,
+                                         this.car2.getPosition().x, this.car2.getPosition().y,
+                                         this.car5.getPosition().x, this.car5.getPosition().y) ) )
+                {
+                    cc.log("SLOW DOWN 4");
+                    this.car4.setPosition(this.car4.getPosition().x, this.car4.getPosition().y - SPEED_SLOW_DOWN);
+                    CAR4_SPEED = true;
+                }
+                else  // ELSE KEEP SPEED
+                {            
+                    // IF THIS CAR IS FAR ENOUGH AND THIS CAR IS THE ONLY ONE ON HIS LINE, SET THE LINE BACK TO EMPTY
+                    if ( !CAR4_DISTANCE_ACHIEVED && this.line_free(this.car4.getPosition().x, this.car2.getPosition().x, 
+                                                                   this.car3.getPosition().x, this.car5.getPosition().x, this.car4.getPosition().y ))
+                    {
+                        this.available_lines[CAR4_LINE].empty = true; 
+                        CAR4_DISTANCE_ACHIEVED = true;
+                    }
+                }
+                if(CAR4_SPEED) {
+                    this.car4.setPosition(this.car4.getPosition().x, this.car4.getPosition().y - SPEED_SLOW_DOWN);
+                }
+                else {
+                        this.car4.setPosition(this.car4.getPosition().x, this.car4.getPosition().y - 4.1);
+                }
+            }
+            else // ELSE CAR IS OUT OF THE DISPLAY REMEMBER TO CREATE A NEW CAR
+            {
+                 NEW_CAR4 = true;  
+                CAR4_SPEED = false;
+            }
         }
         
-		if(this.car4.getPosition().y < -END_POS) 
+//--------------------------------------------------------------------------------------------------------------
+
+        // IF THE CAR IS OUT OF THE DISPLAY SET A NEW CAR 
+		if( NEW_CAR5 )
         {
-            var LINE = getRandomInt(0, STREET_LINES);
-            var ADDPLACEMENT = getRandomInt(20, 60);
+             CAR5_DISTANCE_ACHIEVED = false;
             
-            this.car4.setTexture(get_random_car().res_car);
+             // GET A RANDOM CAR TEXTURE
+             this.car5.setTexture(get_random_car().res_car);
             
-            f_set_oc_streets(LINE);
+             // GET A RANDOM LINE  --> UP TO 4 CARS OTHERS, MODIFING AVAILABLE LINES, BECAUSE NOW THERE IS ALWAYS A LINE AVAIL.
+             CAR5_LINE = this.get_all_available_lines()[ getRandomInt( 0, this.get_all_available_lines().length ) ]; 
             
-			this.car4.setPosition(FIX_MOVE + (MOVE * LINE), this.car4.getPosition().y + START_POS + ADDPLACEMENT);
+             // GET A RANDOM ADDITIONAL PLACE
+             var ADDPLACEMENT = getRandomInt(0, 5);
+             
+             // SET THE CAR
+             this.car5.setPosition(FIX_MOVE + (MOVE * CAR5_LINE ), START_POS + ADDPLACEMENT);
+             
+             // SET THE LINE TO NOT AVAILABLE AND SET WE DONT NEED A NEW CAR OF THIS TYPE
+             this.available_lines[CAR5_LINE].empty = false; NEW_CAR5 = false;
 		}
-        else
-        {
-            this.car4.setPosition(this.car4.getPosition().x, this.car4.getPosition().y - 5);
+        else 
+        { 
+            // IF MOVING
+            if( this.car5.getPosition().y > -END_POS )
+            {  
+                // IF THERE IS A CAR IN FRONT THEN SLOW DOWN 
+                if ( (this.distance_too_close(
+                                         
+                                         this.car5.getPosition().x, this.car5.getPosition().y, 
+                                         this.car4.getPosition().x, this.car4.getPosition().y, 
+                                         this.car3.getPosition().x, this.car3.getPosition().y,
+                                         this.car2.getPosition().x, this.car2.getPosition().y) ) )
+                {
+                    cc.log("SLOW DOWN 5");
+                    this.car5.setPosition(this.car5.getPosition().x, this.car5.getPosition().y - SPEED_SLOW_DOWN);
+                    CAR5_SPEED = true;
+                }
+                else  // ELSE KEEP SPEED
+                {            
+                    // IF THIS CAR IS FAR ENOUGH AND THIS CAR IS THE ONLY ONE ON HIS LINE, SET THE LINE BACK TO EMPTY
+                    if ( !CAR5_DISTANCE_ACHIEVED && this.line_free(this.car5.getPosition().x, this.car4.getPosition().x, 
+                                                                   this.car2.getPosition().x, this.car3.getPosition().x, this.car5.getPosition().y ))
+                    {
+                        this.available_lines[CAR5_LINE].empty = true; 
+                        CAR5_DISTANCE_ACHIEVED = true;
+                    }
+                }
+                if(CAR5_SPEED) {
+                    this.car5.setPosition(this.car5.getPosition().x, this.car5.getPosition().y - SPEED_SLOW_DOWN);
+                }
+                else {
+                        this.car5.setPosition(this.car5.getPosition().x, this.car5.getPosition().y - 4.3);
+                }
+            }
+            else // ELSE CAR IS OUT OF THE DISPLAY REMEMBER TO CREATE A NEW CAR
+            {
+                 NEW_CAR5 = true;  
+                 CAR5_SPEED = false;
+            }
         }
+        
     }
-})
+  
+    
+}); 
+        
 
 
 // Generate unique IDs for use as pseudo-private/protected names.
@@ -177,80 +394,6 @@ function f_generate_id()
     // after the decimal.
     return '_' + Math.random().toString(36).substr(2, 9);
 };
-
-
-
-
-function f_save_pos (line, car_y, id)
-{
-    var car_nbr = 0;
-    var done = false;
-    
-    while ( !done )
-    {
-        car_nbr++;
-
-        if(cars_on_lines[line][car_nbr].car_pos == null)
-        {
-            cars_on_lines[line][car_nbr].car_pos = car_y;
-            cars_on_lines[line][car_nbr].car_id = id;
-
-            cars_on_lines[line].push( { car_pos : null, car_id: null } );
-
-            done = true;
-        }
-    }
-}
-
-
-
-function f_update_pos (line, car_y, id)
-{
-    var car_nbr = 0;
-    var done = false;
-    
-     while ( !done )
-    {
-        car_nbr++;
-
-        if (cars_on_lines[line][car_nbr].car_id == id)
-        {
-            cars_on_lines[line][car_nbr].car_pos = car_y;
-            done = true;
-        }
-    }
-}
-
-
-
-function f_check_distance(line, car_y)
-{
-    if( (car_y   < 50 )
-    {
-        
-    
-    }
-}
-
-
-
-function f_set_oc_streets(LINE, b_val)
-{
-    oc_streets[LINE].field = LINE;
-    oc_streets[LINE].oc = b_val;
-}
-
-
-function f_empty_oc_streets()
-{
-    for(var i = 0; i < STREET_LINES; i++)
-    {
-        oc_streets[i] = { 
-                         field: i, 
-                         oc: false
-                        }
-    }
-}
 
 
 function get_cars() 

@@ -1,5 +1,7 @@
 var MAX_MOVES = 2;
 var ONE_MOVE = 70;
+var enemies = null;
+
 
 var AnimationLayer = cc.Layer.extend({
     goleft: MAX_MOVES,
@@ -11,10 +13,8 @@ var AnimationLayer = cc.Layer.extend({
     init:function() {
         this._super();
 		var size = this.size = cc.director.getWinSize();
-//
-//		var enemies =new EnemiesLayer();
-//        
-//        this.addChild(enemies);
+        enemies = new EnemiesLayer();
+        this.addChild(enemies);
         
         
         this.car = new cc.Sprite.create(res.Car_temp_png);
@@ -38,7 +38,10 @@ var AnimationLayer = cc.Layer.extend({
             );
         cright.setPosition(228, 40);
         
-
+        //2. get the screen size of your game canvas
+        var winsize = cc.director.getWinSize();
+        
+        
         var clr = cc.Menu.create(cleft, cright);
         clr.setPosition(0,0);
         this.addChild(clr);
@@ -61,12 +64,14 @@ var AnimationLayer = cc.Layer.extend({
                    event.getCurrentTarget().turnright();
                 }
         
-                cc.log("key was pressed:  " + keyCode.toString());
+//                cc.log("key was pressed:  " + keyCode.toString());
             },
             onKeyReleased: function(keyCode, event){
             }
         }, this);
-       }  
+       }
+        
+       this.scheduleUpdate();
     },
     turnleft:function(sender)
     {
@@ -89,5 +94,16 @@ var AnimationLayer = cc.Layer.extend({
             this.goleft++;
             this.goright--;
         }
+    },
+    update:function(dt) 
+    {
+        if( cc.rectIntersectsRect(this.car.getBoundingBox(), enemies.car2.getBoundingBox())
+        ||  cc.rectIntersectsRect(this.car.getBoundingBox(), enemies.car3.getBoundingBox()) 
+        ||  cc.rectIntersectsRect(this.car.getBoundingBox(), enemies.car4.getBoundingBox())
+        ||  cc.rectIntersectsRect(this.car.getBoundingBox(), enemies.car5.getBoundingBox()) )
+        {
+            cc.log( "DO SOMETHING ");   
+            cc.director.pause();  
+        }   
     }
 });
