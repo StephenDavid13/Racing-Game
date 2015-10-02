@@ -101,6 +101,7 @@ var AnimationLayer = cc.Layer.extend({
 		cc.rectIntersectsRect(carBoundingBox, car4BoundingBox)) {
 			cc.director.pause();
 			this.addChild(new GameOverLayer());
+			
 		}
 	}
 });

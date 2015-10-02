@@ -66,17 +66,39 @@ var PauseMenuLayer = cc.Layer.extend({
 	init:function() {
 		this._super();
 		
-		var pauseButton = new cc.MenuItemSprite(
-					new cc.Sprite(res.Pause_nope_png),
-					new cc.Sprite(res.Pause_yeah_png),
-					this.goPause, this);
-		var pauseButtonPopUp = new cc.Menu(pauseButton);
-		pauseButtonPopUp.setPosition(30, winsize.height - 20);
-		this.addChild(pauseButtonPopUp);
+		var homeButton = cc.MenuItemImage.create(
+					res.Start_nope_png,
+					res.Start_yeah_png,
+					this.goHome, this);
+		homeButton.setPosition(160, 320);
+		
+		var restartButton = cc.MenuItemImage.create(
+					res.Restart_nope_png,
+					res.Restart_yeah_png,
+					this.goRestart, this);
+		restartButton.setPosition(160, 250);
+		
+		var resumeButton = cc.MenuItemImage.create(
+					res.Start_nope_png,
+					res.Start_yeah_png,
+					this.goResume, this);
+		resumeButton.setPosition(160, 180);
+		
+		var pauseMenu = cc.Menu.create(homeButton, restartButton, resumeButton);
+		pauseMenu.setPosition(0, 0);
+		this.addChild(pauseMenu);
 	},
-	goPause:function() {
-		cc.director.pause();
-		this.addChild(new PauseMenuLayer());
+	goHome:function() {
+		cc.director.resume();
+		cc.director.runScene(new menuScene());
+	},
+	goRestart:function() {
+		cc.director.resume();
+		cc.director.runScene(new gameScene());
+	},
+	goResume:function() {
+		cc.director.resume();
+		this.removeFromParent(true);
 	}
 });
 

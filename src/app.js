@@ -29,8 +29,8 @@ var menu = cc.Layer.extend({
 				res.Start_nope_png,
 				res.Start_yeah_png,
 				this.loginFB, this);
-		//login.setPosition(160, 270);
-		var startMenu = cc.Menu.create(start, login);
+		login.setPosition(160, 320);
+		var startMenu = cc.Menu.create(start);
 		startMenu.setPosition(0,0);
 		this.addChild(startMenu);
 		
