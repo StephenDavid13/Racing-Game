@@ -8,8 +8,15 @@ var res = {
 	Game_BG1_png : "res/menu_bg-v1.png",
 	Start_nope_png : "res/start_n.png",
 	Start_yeah_png : "res/start_s.png",
-	Left_png : "res/left.png",
-	Rigth_png : "res/right.png"
+	Pause_nope_png : "res/pause_n.png",
+	Pause_yeah_png : "res/pause_s.png",
+	Restart_nope_png : "res/restart_n.png",
+	Restart_yeah_png : "res/restart_s.png",
+	Left_nope_png : "res/left_n.png",
+	Left_yeah_png : "res/left_s.png",
+	Right_nope_png : "res/right_n.png",
+	Right_yeah_png : "res/right_s.png",
+	Game_over_BG_png : "res/gameOver-bg.png"
 };
 
 var g_resources = [
@@ -19,8 +26,15 @@ var g_resources = [
 	res.Game_BG1_png,
 	res.Start_nope_png,
 	res.Start_yeah_png,
-    res.Left_png,
-    res.Rigth_png
+	res.Pause_nope_png,
+	res.Pause_yeah_png,
+	res.Restart_nope_png,
+	res.Restart_yeah_png,
+    res.Left_nope_png,
+	res.Left_yeah_png,
+    res.Right_png,
+	res.Right_yeah_png,
+	res.Game_over_BG_png
 ];
 for (var i in res) {
     g_resources.push(res[i]);

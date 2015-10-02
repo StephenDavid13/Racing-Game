@@ -25,7 +25,12 @@ var menu = cc.Layer.extend({
 				res.Start_yeah_png,
 				this.goPlay, this);
 		start.setPosition(160, 240);
-		var startMenu = cc.Menu.create(start);
+		var login = cc.MenuItemImage.create(
+				res.Start_nope_png,
+				res.Start_yeah_png,
+				this.loginFB, this);
+		//login.setPosition(160, 270);
+		var startMenu = cc.Menu.create(start, login);
 		startMenu.setPosition(0,0);
 		this.addChild(startMenu);
 		
@@ -33,6 +38,19 @@ var menu = cc.Layer.extend({
 	},
 	goPlay:function() {
 		cc.director.runScene(new gameScene);
+	},
+	loginFB:function() {
+		FB.login(function(response) {
+			if (response.authResponse) {
+				console.log('Welcome!  Fetching your information.... ');
+				FB.api('/me', function(response) {
+					console.log('Good to see you, ' + response.name + '.');
+				});
+			} 
+			else {
+				console.log('User cancelled login or did not fully authorize.');
+			}
+		});
 	},
 	update:function(dt) {
 		background.scroll();
@@ -48,6 +66,7 @@ var gameScene = cc.Scene.extend({
 		this.addChild(gameLayer);
 		this.addChild(new AnimationLayer());
 		this.addChild(new StatusLayer());
+		this.addChild(new PauseLayer());
 	}
 });
 
