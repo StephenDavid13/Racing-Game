@@ -32,7 +32,8 @@ var EnemiesLayer = cc.Layer.extend({
     
     available_lines : [],
     
-    last_car: function () {
+    last_car: function () 
+    {
                 
     },
     
@@ -47,7 +48,6 @@ var EnemiesLayer = cc.Layer.extend({
         for(var i = 0; i < STREET_LINES; i++)
         {
             this.available_lines[i] = { 
-                                        line: i, 
                                         empty: true
                                       }
         }
@@ -63,21 +63,17 @@ var EnemiesLayer = cc.Layer.extend({
     
     distance_too_close: function(carAX, carAY, carBX, carBY, carCX, carCY, carDX, carDY)
     {
-        var tooClose = false;
-        
-        tooClose = (  ((carAX == carBX)     // CHECK IF SAME LINE
-            &&         (carAY >  carBY)     // CHECK IF CAR2 IS BEHIND ANOTHER CAR
-            &&        ((carAY -  carBY) < MIN_DISTANCE) )   // CHECK THE DISTANCE, IF BELOW DISTANCE REDUCE SPEED
+        return (  ((carAX == carBX)     // CHECK IF SAME LINE
+            &&     (carAY >  carBY)     // CHECK IF CAR2 IS BEHIND ANOTHER CAR
+            &&    ((carAY -  carBY) < MIN_DISTANCE) )    // CHECK THE DISTANCE, IF BELOW DISTANCE REDUCE SPEED
 
-            ||        ((carAX == carCX)     // CHECK IF SAME LINE
-            &&         (carAY >  carCY)     // CHECK IF CAR2 IS BEHIND ANOTHER CAR
-            &&        ((carAY -  carCY) < MIN_DISTANCE) )  // CHECK THE DISTANCE, IF BELOW DISTANCE REDUCE SPEED
+            ||    ((carAX == carCX)     // CHECK IF SAME LINE
+            &&     (carAY >  carCY)     // CHECK IF CAR2 IS BEHIND ANOTHER CAR
+            &&    ((carAY -  carCY) < MIN_DISTANCE) )    // CHECK THE DISTANCE, IF BELOW DISTANCE REDUCE SPEED
 
-            ||        ((carAX == carDX)     // CHECK IF SAME LINE
-            &&         (carAY >  carDY)     // CHECK IF CAR2 IS BEHIND ANOTHER CAR
-            &&        ((carAY -  carDY) < MIN_DISTANCE) ) );  // CHECK THE DISTANCE, IF BELOW DISTANCE REDUCE SPEED
-        
-        return tooClose;
+            ||    ((carAX == carDX)     // CHECK IF SAME LINE
+            &&     (carAY >  carDY)     // CHECK IF CAR2 IS BEHIND ANOTHER CAR
+            &&    ((carAY -  carDY) < MIN_DISTANCE) ) );  // CHECK THE DISTANCE, IF BELOW DISTANCE REDUCE SPEED
     },
     
     get_all_available_lines: function()
@@ -124,6 +120,7 @@ var EnemiesLayer = cc.Layer.extend({
         
         this.scheduleUpdate();
     },
+    
     update:function(dt) 
     {	
 //-------------------------------------------------------------------------------------------------------------------------------
@@ -175,11 +172,13 @@ var EnemiesLayer = cc.Layer.extend({
                     }
                 }
                 
-                if(CAR2_SPEED) {
+                if(CAR2_SPEED) 
+                {
                     this.car2.setPosition(this.car2.getPosition().x, this.car2.getPosition().y - SPEED_SLOW_DOWN);
                 }
-                else {
-                        this.car2.setPosition(this.car2.getPosition().x, this.car2.getPosition().y - 3.4);
+                else 
+                {
+                    this.car2.setPosition(this.car2.getPosition().x, this.car2.getPosition().y - 3.4);
                 }
             }
             else // ELSE CAR IS OUT OF THE DISPLAY REMEMBER TO CREATE A NEW CAR
@@ -188,7 +187,6 @@ var EnemiesLayer = cc.Layer.extend({
                 CAR2_SPEED = false;
             }
         }
-    
     
 //-------------------------------------------------------------------------------------------------------------------------------
  
@@ -240,17 +238,19 @@ var EnemiesLayer = cc.Layer.extend({
                     }
                 }
                 
-                if(CAR3_SPEED) {
+                if(CAR3_SPEED) 
+                {
                     this.car3.setPosition(this.car3.getPosition().x, this.car3.getPosition().y - SPEED_SLOW_DOWN);
                 }
-                else {
-                        this.car3.setPosition(this.car3.getPosition().x, this.car3.getPosition().y - 3.7);
+                else 
+                {
+                    this.car3.setPosition(this.car3.getPosition().x, this.car3.getPosition().y - 3.7);
                 }
             }
             else // ELSE CAR IS OUT OF THE DISPLAY REMEMBER TO CREATE A NEW CAR
             {
                  NEW_CAR3 = true;  
-                CAR3_SPEED = false;
+                 CAR3_SPEED = false;
             }
         }
         
@@ -302,17 +302,19 @@ var EnemiesLayer = cc.Layer.extend({
                         CAR4_DISTANCE_ACHIEVED = true;
                     }
                 }
-                if(CAR4_SPEED) {
+                if(CAR4_SPEED) 
+                {
                     this.car4.setPosition(this.car4.getPosition().x, this.car4.getPosition().y - SPEED_SLOW_DOWN);
                 }
-                else {
-                        this.car4.setPosition(this.car4.getPosition().x, this.car4.getPosition().y - 4.1);
+                else 
+                {
+                    this.car4.setPosition(this.car4.getPosition().x, this.car4.getPosition().y - 4.1);
                 }
             }
             else // ELSE CAR IS OUT OF THE DISPLAY REMEMBER TO CREATE A NEW CAR
             {
                  NEW_CAR4 = true;  
-                CAR4_SPEED = false;
+                 CAR4_SPEED = false;
             }
         }
         
@@ -365,11 +367,13 @@ var EnemiesLayer = cc.Layer.extend({
                         CAR5_DISTANCE_ACHIEVED = true;
                     }
                 }
-                if(CAR5_SPEED) {
+                if(CAR5_SPEED) 
+                {
                     this.car5.setPosition(this.car5.getPosition().x, this.car5.getPosition().y - SPEED_SLOW_DOWN);
                 }
-                else {
-                        this.car5.setPosition(this.car5.getPosition().x, this.car5.getPosition().y - 4.3);
+                else 
+                {
+                    this.car5.setPosition(this.car5.getPosition().x, this.car5.getPosition().y - 4.3);
                 }
             }
             else // ELSE CAR IS OUT OF THE DISPLAY REMEMBER TO CREATE A NEW CAR
@@ -380,14 +384,12 @@ var EnemiesLayer = cc.Layer.extend({
         }
         
     }
-  
-    
 }); 
         
 
 
 // Generate unique IDs for use as pseudo-private/protected names.
-function f_generate_id()
+function generate_id()
 {
     // Math.random should be unique because of its seeding algorithm.
     // Convert it to base 36 (numbers + letters), and grab the first 9 characters
@@ -398,40 +400,39 @@ function f_generate_id()
 
 function get_cars() 
 {
-    return {
-                car : [
-                       {
-                            icar: {   car_name : "truck",
-                                      res_car : res.Car_temp2_png,
-                                      speed: 1
-                            },
-                       },{
-                            icar: {
-                                      car_name: "ncar",
-                                      res_car : res.Car_temp3_png,
-                                      speed: 1.2
-                            },
-                       },{
-                            icar: {
-                                      car_name: "bike",
-                                      res_car : res.Car_temp4_png,
-                                      speed: 1.3
-                            }
-                       },{
-                            icar: {
-                                      car_name: "temp",
-                                      res_car : res.CloseNormal_png,
-                                      speed: 1.3
-                            }
-                       }
-                     ]        
-    };
+    return [
+               {
+                    icar: {   car_name : "truck",
+                              res_car : res.Car_temp2_png,
+                              speed: 3
+                    },
+               },{
+                    icar: {
+                              car_name: "ncar",
+                              res_car : res.Car_temp3_png,
+                              speed: 3.2
+                    },
+               },{
+                    icar: {
+                              car_name: "bike",
+                              res_car : res.Car_temp4_png,
+                              speed: 3.3
+                    }
+               },{
+                    icar: {
+                              car_name: "temp",
+                              res_car : res.CloseNormal_png,
+                              speed: 1
+                    }
+               }
+            ];      
+
 }
 
 
 function getRandomInt(min, max)
 {
-    return Math.floor(Math.random() * (max-min)) +min;
+    return Math.floor(Math.random() * (max-min)) + min;
 }
 
 
@@ -440,5 +441,5 @@ function get_random_car()
     var random_int = getRandomInt(0,3);
     var random_car = get_cars();    
     
-    return random_car.car[random_int].icar;
+    return random_car[random_int].icar;
 }
